@@ -31,10 +31,7 @@
 //     }
 // }
 
-#[derive(Copy, Debug, Serde, Drop,)]
-
-
-
+// #[derive(Copy, Debug, Serde, Drop,)]
 // pub struct Book {
 //     title:felt252 ,
 //     author:felt252,
@@ -44,42 +41,110 @@
 
 
 
-
-
 #[starknet::interface]
 pub trait  Ischoollibrary<TContractState>{
-    fn add_book(ref self: TContractState, book_name: felt252 );
-    fn borrow_book (ref self: TContractState, book_name: felt252); -> bool;
+    fn add_book(ref self: TContractState, book_name:felt252 );
+    fn borrow_book (ref self: TContractState, book_name: felt252) -> bool; 
 
 }
 
-#[starknet::contract]
-mod SchoolLibrary{
 
-    use starknet::storage::StoragePathEntry;
-    use starknet::storage::Map;
-    use starknet::storage::{ StoragePointerWriteAccess, StoragePointerReadAccess,}
+
+#[starknet::contract] 
+
+mod SchoolLibrary{
+    use starknet::storage::{Map, StoragePointerWriteAccess, StoragePointerReadAccess, StoragePathEntry};
     //use super::*;
+
 
     #[storage]
 
     struct Storage{
-        book_recorder: Map<felt252, bool> //<Book, bool>
+        book_recorder: Map<felt252, bool>//Map<Book, bool>
+
     }
 
-    #[abi(embed_v0)]
-    impl SchoolLibrabryimpl of super::Ischoollibrary<ContractState>{
-        fn add_book(ref self: ContractState, book_name: felt252){
+
+
+    #[abi (embed_v0)]
+
+
+    impl SchoolLibraryIpml of super::Ischoollibrary<ContractState> {
+
+        fn add_book(ref self: ContractState, book_name: felt252 ){
+
             self.book_recorder.entry(book_name).write(true);
         }
-        fn borrow_book(ref self: ContractState, book_name: felt252) -> bool{
-
-
+        fn borrow_book (ref self: ContractState, book_name: felt252) -> bool {
             let book_exists = self.book_recorder.entry(book_name).read();
-            
 
-            assert!(book_exists == true, 'book unavailable')
-        }
+            if book_exists {
+                return true;
+            } else {
+                return false;
+            }
+
+        } 
+        
     }
 
 }
+
+
+    // use starknet::storage::StoragePathEntry;
+    // use starknet::storage::Map;
+    // use starknet::storage::{ StoragePointerWriteAccess, StoragePointerReadAccess,}
+    // use super::*;
+    //
+    // struct Storage{
+    //     felt252, bool> //<Book, bool>
+
+    // #[abi(embed_v0)]
+    // impl StudentRecordimpl of super::IStudentRecord<ContractState>{
+//     impl SchoolLibrabryimpl of super::Ischoollibrary<ContractState>{
+//         fn add_book(ref self: ContractState, book_name: felt252) {
+//             self.book_recorder.entry(book_name).write(true);
+//         };
+//         fn borrow_book(ref self: ContractState, book_name: felt252) -> bool{
+
+
+//             let book_exists - self.book_recorder.entry(book_name).read();
+
+
+//             if book_exists{
+//                 return true;
+//             }else {
+//                 return false;
+//             }
+//         }
+//     }
+// }
+// use core::starknet::contract_address;
+// #[derive(Copy, Debug, Serde, Drop,)]
+
+// #[starknet::interface]
+
+// pub trait IStudentRecord<TContractState>{
+//     fn borrow_book_from_library(ref self: TContractState, book_name: felt252, student_name: felt252, lib_address: ContractAddress); 
+// }
+// #[starknet::contract]
+// mod StudentRecord{
+//     use starknet::storage::{Map};
+//     use super::IschoollibraryDispatcher
+//     use core::starknet::ContractAddress
+        
+//     #[storage]
+    
+//     // struct storage{
+//     //     borrowed_books: Map<(felt252, felt252),
+//     // }
+//     struct Storage{
+//         borrowed_books: Map<felt252, bool> //<Book, bool>
+//     }
+//         impl StudentRecordimpl of super::IStudentRecord<ContractState>{
+//         fn borrow_book_from_library(ref self: ContractState, book_name: felt252, student_name: felt252, lib_address: ContractAddress) -> bool{
+//             let lib_dispatcher = IschoollibraryDispatcher {contract_address: lib_address}
+//         }
+//     }
+// }
+
